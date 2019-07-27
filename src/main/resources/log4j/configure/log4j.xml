@@ -8,10 +8,10 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
         </layout>
-        <filter class="i.know.base.log.log4j.StringMatchWrapFilter">
+    <!--    <filter class="i.know.base.log.log4j.StringMatchWrapFilter">
             <param name="StringToMatch" value="thirdlog" />
             <param name="AcceptOnMatch" value="false" />
-        </filter>
+        </filter>-->
     </appender>
 
     <!-- 第三方日志 -->
@@ -23,10 +23,10 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
         </layout>
-        <filter class="org.apache.log4j.varia.StringMatchFilter">
+<!--        <filter class="org.apache.log4j.varia.StringMatchFilter">
             <param name="StringToMatch" value="thirdlog" />
             <param name="AcceptOnMatch" value="false" />
-        </filter>
+        </filter>-->
     </appender>
 
 <!--        &lt;!&ndash; 第三方日志 &ndash;&gt;
