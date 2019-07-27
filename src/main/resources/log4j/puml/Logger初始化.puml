@@ -1,0 +1,29 @@
+@startuml logger初始化
+:logger初始化;
+note right
+  logger日志的初始化主要就是
+  维护logger实例到Hierarchy的
+  内部表中，同时维护各个实例
+  之间的父子关系
+  ====
+end note
+:repositorySelector\n选择器确认日志仓库实例;
+:日志仓库中开始获取\n具体的logger实例;
+
+if (日志仓库中的hashtable中是否存在?) then (不存在)
+  :工厂方法创建logger实例,将logger实例\n维护到Hierarchy的内部表中;
+  :父类的logger构建（log日志会继承父类属性\n具体看一下The complete log4j manual.pdf）;
+  end
+elseif(是否属于logger实例) then (是)
+  :直接返回logger实例;
+  end
+elseif(是否属于ProvisionNode节点) then (是)
+  :先生成logger实例\n维护到Hierarchy的内部表中;
+  :链接子节点和父节点;
+  end
+endif
+  :返回null;
+  end
+
+
+@enduml

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+
+    <!-- 配置控制台输出 -->
+    <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
+        </layout>
+        <filter class="i.know.base.log.log4j.StringMatchWrapFilter">
+            <param name="StringToMatch" value="thirdlog" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+
+    <!-- 第三方日志 -->
+    <appender name="dailyRollingAppender" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="UTF-8"/>
+        <param name="threshold" value="DEBUG"/>
+        <param name="File" value="../logs/llb.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="thirdlog" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+
+<!--        &lt;!&ndash; 第三方日志 &ndash;&gt;
+    <appender name="dailyRollingAppender2" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="UTF-8"/>
+        <param name="threshold" value="DEBUG"/>
+        <param name="File" value="../logs/llb.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="Thirdlog" />
+            <param name="AcceptOnMatch" value="true" />
+        </filter>
+    </appender>-->
+<!--    <logger name="thirdlog">
+        <level value="debug"/>
+        <appender-ref ref="ConsoleAppender"/>
+    </logger>
+    <category name="123" >
+        <priority value="ERROR" />
+        <appender-ref ref="ConsoleAppender"/>
+    </category>-->
+    <root>
+        <level value="debug"/>
+        <!--输出器-->
+        <appender-ref ref="ConsoleAppender"/>
+        <appender-ref ref="dailyRollingAppender"/>
+    </root>
+</log4j:configuration>

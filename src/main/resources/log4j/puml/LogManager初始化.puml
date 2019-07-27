@@ -1,0 +1,74 @@
+@startuml LogManager初始化
+state LogManager初始化{
+    state LogManagerstatic静态块初始化{
+        Hierarchy结构初始化-->repositorySelector初始化
+        note left of Hierarchy结构初始化:Hierarch实现了\nLoggerRepository\n相当于一个仓库
+        Hierarchy结构初始化:初始化内部的表(维护logger对象)
+        Hierarchy结构初始化:初始化监听器
+        Hierarchy结构初始化:初始化root节点
+        Hierarchy结构初始化:设置日志级别
+        Hierarchy结构初始化:将对象维护到root节点
+        Hierarchy结构初始化:初始化Renderer
+        Hierarchy结构初始化:设置默认工厂
+
+        repositorySelector初始化-->配置文件加载
+        note right of repositorySelector初始化:默认构造器不展开
+
+        state 配置文件加载{
+            判断环境变量中是否存在log4j.defaultInitOverride-->结束初始化流程:存在的情况下
+            判断环境变量中是否存在log4j.defaultInitOverride-->继续加载流程:不存在的情况下
+            继续加载流程:搜索log4j.configuration配置的配置文件路径
+            继续加载流程:搜索log4j.configuratorClass配置的加载器
+            继续加载流程:搜索log4j.xml路径
+            继续加载流程:搜索log4j.properties路径
+            继续加载流程:开始读取配置进行,加载配置
+            state 开始读取配置进行加载配置{
+                开始读取配置进行加载配置:根据log4j.configuratorClass配置的加载器\n和url判断使用何种方式加载\n包括DOM加载,Property加载
+
+            }
+            继续加载流程-->开始读取配置进行加载配置
+        }
+        note right of 配置文件加载:这一段主要是\nlog4j日志配置查找流程,\n加载配置文件的顺序
+    }
+    开始读取配置进行加载配置 -right-> PropertyConfigurator:PropertyConfigurator加载方式
+    开始读取配置进行加载配置 -right-> DOMConfigurator:DOMConfigurator加载方式
+    开始读取配置进行加载配置 -right-> DefaultLF5Configurator:DefaultLF5Configurator加载方式
+
+    state PropertyConfigurator{
+
+        state PropertyConfigurator.doConfigure{
+            PropertyConfigurator.doConfigure:是否开启log4j.debug配置(用于打印log4j组件日志)
+            PropertyConfigurator.doConfigure:是否开启og4j.reset配置(重置Hierarchy结构)
+            PropertyConfigurator.doConfigure:设置log4j.threshold
+            PropertyConfigurator.doConfigure:开始加载root节点日志
+            PropertyConfigurator.doConfigure:初始化日志工厂
+            PropertyConfigurator.doConfigure:render和cats的配置
+            PropertyConfigurator.doConfigure:清除注册的reder和cats注册信息
+            开始加载root节点日志-right->初始化日志工厂
+            初始化日志工厂-right->render和cats的配置
+            state 开始加载root节点日志{
+                开始加载root节点日志:1.查找配置log4j.rootLogger或者\nlog4j.rootCategory配置(StringTokenizer)
+                开始加载root节点日志:2.没有设置root日志级别则默认设置为debug\n(日志级别的设置可以看一下OptionConverter.\ntoLevel,可以拓展日志级别)
+                开始加载root节点日志:3.初始化Appenders
+                state 初始化Appenders{
+                    初始化Appenders:1.实例化Appender
+                    初始化Appenders:2.添加filter,errorhandler,layout
+                    初始化Appenders:3.基本参数注入
+                }
+            }
+            state 初始化日志工厂{
+                初始化日志工厂:1.读取log4j.loggerFactory配置
+                初始化日志工厂:2.实例化日志工厂(PropertySetter.setProperties参数注入)
+            }
+            state render和cats的配置{
+                render和cats的配置:1.匹配log4j.logger和log4j.category进行处理，处理方式和\n【开始加载root节点】类似，也就是部分服务配置日志\n重复打印的原因(Appenders会重复添加),加载log4j.additivity配置
+                render和cats的配置:2.匹配log4j.throwableRenderer和log4j.renderer
+            }
+        }
+
+    }
+    note top of PropertyConfigurator: Property模式加载
+}
+
+note right of LogManager初始化: 日志初始化主要定义日志工厂类，初始化加载配置,整个结构的维护\n,PropertySetter#setProperties()有些隐含的操作，比如激活activateOptions
+@enduml

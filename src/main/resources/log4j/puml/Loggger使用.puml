@@ -1,0 +1,63 @@
+@startuml Logger使用
+start
+:调用logger的debug方法;
+if(判断root的级别是或否允许这个级别的日志输出) then (是)
+    if(判断本logger实例是否有这个级别的输出权限) then (是)
+        :包装LoggingEvent对象;
+        :调用callAppenders方法;
+        :调用appendLoopOnAppenders;
+        if(Logger.additive==true) then (true)
+            while (是否存在父节点&父节点的additive==true) is (true)
+                :调用父节点appendLoopOnAppenders;
+            endwhile(false)
+            :结束调用appendLoopOnAppenders;
+        else (false)
+            :结束调用appendLoopOnAppenders;
+        endif
+        :计算是否有调用过append;
+        end;
+    else (否)
+        :退出操作;
+        end
+    endif
+else (否)
+    :退出操作;
+    end
+endif
+
+start
+:调用appendLoopOnAppenders流程;
+:获取loggappenderer对象中的appenderList中的appender;
+:执行appender.doAppend;
+if(appender is close) then(yes)
+    :返回;
+    end
+else
+    :获取append的headFilter;
+    while (是否存在Filter,是否跳出)
+    :执行filter的decide;
+    endwhile
+    :执行append(各个字类处理);
+    end
+endif
+
+start
+:例ConsoleAppender执行示例;
+:先查看各个状态是否正常;
+:调用subAppend方法;
+:用system.out将PatterLayout的format完成的字符输出;
+
+note right
+  PatternParser#parse方法来匹配输出项的实现类，
+  通过PatternConverter的链表结构来调取具体的类
+  来解析每一段结构
+  ====
+  PatternConverter 的实现在PatternParser内部类中
+  其中默认实现包括
+  DatePatternConverter,
+  MDCPatternConverter,
+  LocationPatternConverter(栈信息的展示)
+end note
+:flush内存;
+
+@enduml
